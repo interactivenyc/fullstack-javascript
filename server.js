@@ -1,43 +1,20 @@
-import config, {nodeEnv, logStars} from "./config";
+import config from './config';
+import apiRouter from './api';
 
-/*
-  console.log("server.js - should import config file here");
-  console.log(config);
-  console.log(nodeEnv);
-  logStars("logStars Message");
-*/
+import express from 'express';
+const server = express();
 
-/*
-import https from "https";
+server.set('view engine', 'ejs');
 
-https.get("https://www.lynda.com", res => {
-  console.log("www.lynda.com response: ", res.statusCode);
-
-  res.on("data", chunk => {
-    //console.log(chunk.toString());
-  })
+server.get('/', (req, res) => {
+  res.render('index', {
+    content: '...+'
+  });
 });
-*/
 
+server.use('/api', apiRouter);
+server.use(express.static('public'));
 
-
-import http from "http";
-
-const server = http.createServer();
-
-server.listen(8080);
-
-
-
-
-server.on("request", (req, res) => {
-  console.log("request/response: ", req.toString());
-  res.write("Hello HTTP!\n")
-
-  setTimeout(() => {
-    res.write("timeout 3 seconds");
-      res.end();
-  }, 3000)
-
-
+server.listen(config.port, () => {
+  console.info('Express listening on port', config.port);
 });

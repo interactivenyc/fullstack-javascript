@@ -1,4 +1,4 @@
-console.log("config");
+console.log("config loading");
 
 const env = process.env;
 
@@ -11,6 +11,7 @@ export const logStars = function(message) {
   console.info('**********');
   console.info(message);
   console.info('**********');
+
 };
 
 export default {
