@@ -1,29 +1,27 @@
 import React from 'react';
 import Header from './Header';
+import ContestPreview from './ContestPreview';
 
 class App extends React.Component {
   state = {
     pageHeader: 'Naming Contests'
   };
   componentDidMount() {
-    //console.log('componentDidMount');
-    //debugger;
-    // ajax, timers and listeners
+    // timers, listeners
   }
   componentWillUnmount() {
-    //console.log('componentWillUnmount');
-    //debugger;
-    // cleanup memory, timers and listeners
+    // clean timers, listeners
   }
   render() {
-    return(
+    return (
       <div className="App">
-        <Header message={this.state.pageHeader}/>
+        <Header message={this.state.pageHeader} />
         <div>
-          ...
+          {this.props.contests.map(contest =>
+            <ContestPreview {...contest} />
+          )}
         </div>
       </div>
-
     );
   }
 }
