@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import ContestPreview from './ContestPreview';
+import axios from 'axios';
 
 class App extends React.Component {
   state = {
@@ -8,7 +9,17 @@ class App extends React.Component {
     contests: []
   };
   componentDidMount() {
-    // timers, listeners
+    axios.get('/api/contests')
+      .then(resp => {
+        this.setState({
+          contests: resp.data.contests
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
   }
   componentWillUnmount() {
     // clean timers, listeners
