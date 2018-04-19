@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 import Header from './Header';
 import ContestList from './ContestList';
 import Contest from './Contest';
+import * as api from '../api';
 
 const pushState = (obj, url) =>
   window.history.pushState(obj, '', url);
 
 class App extends Component {
-  state = {
-    pageHeader: 'Naming Contests',
-    contests: this.props.initialContests
+  static propTypes = {
+    initialData: PropTypes.object.isRequired
   };
+  state = this.props.initialData;
   componentDidMount() {
   }
   componentWillUnmount() {
@@ -21,12 +22,34 @@ class App extends Component {
       {currentContestId: contestId},
       `/contest/${contestId}`
     );
+
+
     // lookup the contest
-    this.setState({
-      pageHeader: this.state.contests[contestId].contestName,
-      currentContestId: contestId
-    });
+    console.log('[App.js] fetching contest');
+    api.fetchContest(contestId)
+      .then(contest => {
+        console.log(contest);
+        this.setState({
+          pageHeader: contest.contestName,
+          currentContestId: contest.id,
+          // update contests object with fetched data from server
+          contests: {
+            ...this.state.contests,
+            [contest.id]: contest
+          }
+
+        });
+      });
+
+
   };
+  pageHeader() {
+    console.log('[App.js] pageHeader()');
+    if (this.state.currentContestId){
+      return this.currentContest().contestName;
+    }
+    return 'Naming Contests';
+  }
   currentContest() {
     if (this.state.currentContestId){
       return <Contest {...this.state.contests[this.state.currentContestId]}/>;
@@ -40,7 +63,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Header message={this.state.pageHeader} />
+        <Header message={this.pageHeader()} />
         {this.currentContest()}
       </div>
     );
