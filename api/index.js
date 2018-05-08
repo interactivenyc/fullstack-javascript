@@ -69,11 +69,11 @@ router.get('/names/:nameIds', (req, res) => {
           return;
         }
 
-        console.log('[api/index.js] nameId: ', name.id);
+        console.log('[api/index.js] nameId: ', name._id);
         names[name._id] = name;
 
       });
-  }, 2000);
+  }, 500);
 });
 
 router.post('/names', (req, res) => {
