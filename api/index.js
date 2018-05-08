@@ -48,4 +48,32 @@ router.get('/contests/:contestId', (req, res) => {
     .catch(console.error);
 });
 
+router.get('/names/:nameIds', (req, res) => {
+  console.log('[api/index.js] fetching names:');
+
+  const nameIds = req.params.nameIds.split(',').map(Number);
+
+  let names = {};
+
+  //simulate server time
+  setTimeout(function () {
+    mdb.collection('names').find({ id: { $in: nameIds }})
+      .each((err, name) => {
+        assert.equal(null, err);
+
+        if (!name) { //no more names
+          res.send({ names });
+          return;
+        }
+
+        console.log('[api/index.js] nameId: ', name.id);
+        names[name.id] = name;
+
+      });
+  }, 2000);
+
+
+
+});
+
 export default router;
