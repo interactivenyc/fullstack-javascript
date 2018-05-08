@@ -9,7 +9,7 @@ export const logStars = function(message) {
 };
 
 export default {
-  mongodbUri: 'mongodb://localhost:27017/test',
+  mongodbUri: 'mongodb+srv://admin:evil68@mongocluster0-a9zvz.mongodb.net/admin',
   port: env.PORT || 8080,
   host: env.HOST || '0.0.0.0',
   get serverUrl() {

@@ -8,7 +8,7 @@ import config from '../config';
 let mdb;
 
 MongoClient.connect(config.mongodbUri, (err, client) => {
-  let db = client.db('test');
+  let db = client.db('tutorial1');
 
   assert.equal(null, err);
 
@@ -70,9 +70,12 @@ router.get('/names/:nameIds', (req, res) => {
 
       });
   }, 2000);
-
-
-
 });
+
+router.post('/names', (req, res) => {
+  console.log('[api/index.js] posting names:');
+  res.send(req.body);
+});
+
 
 export default router;
