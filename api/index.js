@@ -44,8 +44,12 @@ router.get('/contests/:contestId', (req, res) => {
   mdb.collection('contests')
     .findOne({_id: ObjectID(req.params.contestId)})
     .then(contest => res.send(contest))
-    .catch(console.error);
+    .catch(error => {
+      console.error(error);
+      res.status(404).send('Bad Request');
+    });
 });
+
 
 router.get('/names/:nameIds', (req, res) => {
   console.log('[api/index.js] fetching names:');
@@ -74,7 +78,32 @@ router.get('/names/:nameIds', (req, res) => {
 
 router.post('/names', (req, res) => {
   console.log('[api/index.js] posting names:');
-  res.send(req.body);
+  //res.send(req.body);
+  const contestId = ObjectID(req.body.contestId);
+  const name = req.body.newName;
+  //validation
+
+  mdb.collection('names').insertOne({ name }).then(result => {
+    console.log(result.insertedId, contestId);
+    mdb.collection('contests').findAndModify( // insert the new name
+      { _id: contestId },
+      [],
+      { $push: { nameIds: result.insertedId } },
+      { new: true }
+    ).then(doc => { // send the result back to the UI
+      //console.log(doc);
+      res.send({
+        updatedContest: doc.value,
+        newName: { _id: result.insertedId, name }
+      });
+    })
+
+      .catch(error => {
+        console.error(error);
+        res.status(404).send('Bad Request from findAndModify');
+      });
+
+  });
 });
 
 
