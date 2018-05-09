@@ -6,12 +6,16 @@ import ContestList from './ContestList';
 import Contest from './Contest';
 import * as api from '../api';
 
-const pushState = (obj, url) =>
+const pushState = (obj, url) => {
+  console.log('[App] pushState: ', obj);
   window.history.pushState(obj, '', url);
+};
 
 const onPopState = (handler) => {
   window.onpopstate = handler;
 };
+
+
 
 class App extends React.Component {
   static propTypes = {
@@ -19,10 +23,12 @@ class App extends React.Component {
   };
 
   state = this.props.initialData;
+  skipPushState = false;
 
   componentDidMount() {
+    console.log('[App] componentDidMount');
     onPopState((event) => {
-      console.log('state: ', event.state);
+      console.log('[App] onPopState: ', event.state);
       this.setState({
         currentContestId: (event.state || {}).currentContestId
       });
@@ -35,10 +41,16 @@ class App extends React.Component {
   }
 
   fetchContest = (contestId) => {
-    pushState(
-      { currentContestId: contestId },
-      `/contest/${contestId}`
-    );
+    console.log('[App] fetchContest');
+    if (this.skipPushState) {
+      this.skipPushState = false;
+    } else {
+      pushState(
+        { currentContestId: contestId },
+        `/contest/${contestId}`
+      );
+    }
+
     api.fetchContest(contestId).then(contest => {
       this.setState({
         currentContestId: contest._id,
@@ -117,12 +129,24 @@ class App extends React.Component {
 
   currentContent() {
     if (this.state.currentContestId) {
-      return <Contest
-        contestListClick={this.fetchContestList}
-        fetchNames={this.fetchNames}
-        lookupName={this.lookupName}
-        addName={this.addName}
-        {...this.currentContest()} />;
+      if (!this.state.contests[this.state.currentContestId].description) {
+        console.log('[App] TODO: Fix this bug properly. Shouldn\'t need skipPushState');
+
+        // This only happens when using the back button. Fetching the
+        // contest this way forces the page to load properly, but a
+        // pushState is happening when it shouldn't
+
+        this.skipPushState = true;
+        this.fetchContest(this.state.currentContestId);
+      } else {
+        return <Contest
+          contestListClick={this.fetchContestList}
+          fetchNames={this.fetchNames}
+          lookupName={this.lookupName}
+          addName={this.addName}
+          {...this.currentContest()} />;
+      }
+
     }
 
     return <ContestList
