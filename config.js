@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 const env = process.env;
 
 export const nodeEnv = env.NODE_ENV || 'development';

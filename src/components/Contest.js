@@ -1,15 +1,21 @@
+/*eslint-disable no-console */
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 class Contest extends Component {
+  constructor(props) {
+    super(props);
+    this.newNameInput = React.createRef();
+  }
+
   componentDidMount() {
     this.props.fetchNames(this.props.nameIds);
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    this.props.addName(this.refs.newNameInput.value, this.props._id);
-    this.refs.newNameInput.value = '';
+    this.props.addName(this.newNameInput.current.value, this.props._id);
+    this.newNameInput.current.value = '';
   }
 
   render() {
@@ -52,7 +58,7 @@ class Contest extends Component {
               <div className="input-group">
                 <input type="text"
                   placeholder="New Name Here..."
-                  ref="newNameInput"
+                  ref={this.newNameInput}
                   className="form-control" />
                 <span className="input-group-btn">
                   <button type="submit" className="btn btn-info">Sumbit</button>
@@ -62,7 +68,7 @@ class Contest extends Component {
           </div>
         </div>
 
-        <div className="home-link link"
+        <div className="btn btn-info"
           onClick={this.props.contestListClick}>
           Contest List
         </div>
